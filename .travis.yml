@@ -1,0 +1,25 @@
+language: ruby
+
+cache: bundler
+
+sudo: false
+
+branches:
+  except:
+  - gh-pages
+  - next_doc_release
+env:
+  global:
+  - TRAVIS_BUILD=true
+
+rvm:
+  - 1.9.3
+  - jruby-19mode
+  - 2.1
+  - 2.2
+
+before_install:
+  - gem update --system
+  - gem update bundler
+
+script: bundle exec rake ci
