@@ -9,8 +9,8 @@ require_relative '../version'
 
 include GLI::App
 
-Graces::CLI.module_eval do
+Grache::CLI.module_eval do
   program_desc 'Graces - Cache for ruby gems.'
 
-  version Graces::VERSION
+  version Grache::VERSION
 end

@@ -3,7 +3,7 @@
 require 'gli'
 require 'pp'
 
-Graces::CLI.module_eval do
+Grache::CLI.module_eval do
   pre do |_global, _command, _options, _args|
     # Pre logic here
     # Return true to proceed; false to abort and not call the

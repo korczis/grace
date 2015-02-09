@@ -4,7 +4,7 @@ require 'gli'
 require 'pp'
 
 # Define Graces::CLI as GLI Wrapper
-module Graces
+module Grache
   module CLI
     include GLI::App
 
@@ -22,4 +22,4 @@ module Graces
   end
 end
 
-Graces::CLI.main(ARGV) if __FILE__ == $PROGRAM_NAME
+Grache::CLI.main(ARGV) if __FILE__ == $PROGRAM_NAME

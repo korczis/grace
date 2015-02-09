@@ -5,7 +5,7 @@ require 'grache/version'
 
 Gem::Specification.new do |s|
   s.name = 'grache'
-  s.version = Graces::VERSION
+  s.version = Grache::VERSION
   s.licenses = ['MIT']
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.summary = 'Great Ruby Cache for gems'
   s.description = 'Great Ruby Cache for ruby gems'
   s.email = 'korczis@gmail.com'
-  s.executables = ['graces']
+  s.executables = ['grache']
   s.extra_rdoc_files = %w(LICENSE README.md)
 
   s.files = `git ls-files`.split($/)
