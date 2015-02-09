@@ -47,5 +47,7 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
 SimpleCov.start do
   add_filter 'spec/'
 
-  add_group 'Models', 'lib/grache/bundler'
+  add_group 'Bundler', 'lib/grache/bundler'
+  add_group 'CLI', 'lib/grache/cli'
+  add_group 'Packer', 'lib/grache/packer'
 end
