@@ -1,0 +1,7 @@
+#! /usr/bin/env ruby
+
+require_relative '../lib/grache/cli/cli'
+
+res = Graces::CLI.main(ARGV)
+
+exit(res)

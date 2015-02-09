@@ -1,2 +1,3 @@
-# grace
-Cache for ruby gems
+# grache
+
+Great Ruby Cache for gems

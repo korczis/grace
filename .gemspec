@@ -1,10 +1,10 @@
 # encoding: utf-8
 
 $:.push File.expand_path('../lib/', __FILE__)
-require 'graces/version'
+require 'grache/version'
 
 Gem::Specification.new do |s|
-  s.name = 'graces'
+  s.name = 'grache'
   s.version = Graces::VERSION
   s.licenses = ['MIT']
 
@@ -13,14 +13,14 @@ Gem::Specification.new do |s|
     'Tomas Korcak'
   ]
 
-  s.summary = 'Cache for ruby gems'
-  s.description = 'Cache for ruby gems'
+  s.summary = 'Great Ruby Cache for gems'
+  s.description = 'Great Ruby Cache for ruby gems'
   s.email = 'korczis@gmail.com'
   s.executables = ['graces']
   s.extra_rdoc_files = %w(LICENSE README.md)
 
   s.files = `git ls-files`.split($/)
-  s.homepage = 'http://github.com/korczis/graces'
+  s.homepage = 'http://github.com/korczis/grache'
   s.require_paths = ["lib"]
 
   s.add_development_dependency 'coveralls', '~> 0.7', '>= 0.7.8'
