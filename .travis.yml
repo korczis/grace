@@ -1,4 +1,4 @@
-language: ruby
+  language: ruby
 
 cache: bundler
 
@@ -23,4 +23,8 @@ before_install:
   - gem update bundler
 
 script: bundle exec rake ci
+
+notifications:
+  slack:
+    secure: bPNEO9bbp7o45iwXeltMfpDHOJtZExcRY7OLm+XdppZgcCGGTMXNpJyceiwavSKYkw4QfGx6BzD4EnhD2OP9Zb/o+in26l7yKMl20yv1KqKuH2dYT1bkxp688La1pGgnelONhf3VRx/JHoqZkPostKpQy9KM5gyTy40+RKvvcgk=
 
