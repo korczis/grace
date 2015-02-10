@@ -29,7 +29,8 @@ tomaskorcak@kx-mac:~/dev/grache-test$
 - [grache pack](#grache-pack)
 - [grache pack build](#grache-pack-build)
 - [grache pack zip](#grache-pack-zip)
-
+- [grache pack install](#grache-pack-install)
+- 
 ### grache help
 
 Lets type following:
