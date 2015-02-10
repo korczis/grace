@@ -86,6 +86,40 @@ COMMANDS
 tomaskorcak@kx-mac:~/dev/grache-test$
 ```
 
+
+### grache pack build
+
+Builds the vendor/cache for deployment.
+
+Lets type:
+
+```
+grache pack build
+```
+
+We should get sometthing like this: 
+
+```
+tomaskorcak@kx-mac:~/dev/grache-test$ grache pack build
+Packing /Users/tomaskorcak/dev/grache-test
+Gemfile located at /Users/tomaskorcak/dev/grache-test/Gemfile
+Deleting cache /Users/tomaskorcak/dev/grache-test/vendor
+bundle pack --gemfile=/Users/tomaskorcak/dev/grache-test/Gemfile --all
+Using ...
+Using json 1.8.2
+Using gooddata 0.6.13
+Using gooddata_connectors_base 0.0.1 from https://github.com/gooddata/gooddata_connectors_base.git (at s3)
+Using gooddata_connectors_downloader_salesforce 0.0.1 from https://github.com/gooddata/gooddata_connectors_downloader_salesforce (at gse)
+Using gooddata_connectors_metadata 0.0.1 from https://github.com/gooddata/gooddata_connectors_metadata.git (at bds_implementation)
+Bundle complete! 4 Gemfile dependencies, 40 gems now installed.
+Use `bundle show [gemname]` to see where a bundled gem is installed.
+Updating files in vendor/cache
+  * i18n-0.7.0.gem
+  * ....
+  * gooddata-0.6.13.gem
+tomaskorcak@kx-mac:~/dev/grache-test$
+```
+
 ## References
 
 [Travis CI Bundler Caching](http://docs.travis-ci.com/user/caching/)
