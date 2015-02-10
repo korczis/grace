@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require 'fileutils'
+require 'json'
 require 'tmpdir'
 
 require 'rubygems'
@@ -24,7 +25,8 @@ module Grache
       # deployment path
       'bundle-install-deployment-path' => 'bundle install --gemfile=%s --deployment --path %s',
 
-      'bundle-pack' => 'bundle pack --all',
+      # gemfile path
+      'bundle-pack' => 'bundle pack --gemfile=%s --all',
 
       # gemspec path
       'gem-build' => 'gem build %s' # spec path
@@ -95,18 +97,8 @@ module Grache
           FileUtils.rm_rf cache_dir
         end
 
-        cmd = CMDS['bundle-pack']
+        cmd = CMDS['bundle-pack'] % gemfile
         exec_cmd(cmd)
-
-        # cmd = CMDS['bundle-install-deployment'] % [gemfile]
-        # exec_cmd(cmd)
-
-        # gems = ::Bundler.rubygems.all_specs
-
-        # Dir.chdir(gem_dir) do
-        #   Dir.mktmpdir do |tmp_dir|
-        #   end
-        # end
       end
     end
 
@@ -117,6 +109,10 @@ module Grache
 
     def get_checksum(path)
       Packer.get_checksum(path)
+    end
+
+    def install(opts = {})
+      puts "Installing pack: #{JSON.pretty_generate(opts)}"
     end
 
     def pack(opts = DEFAULT_PACK_OPTIONS)
