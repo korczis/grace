@@ -22,5 +22,8 @@ module Grache
       # The Bundler runtime will also not try to make the gems in the skipped groups available.
       'without'
     ]
+
+    class Bundler
+    end
   end
 end

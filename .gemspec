@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.version = Grache::VERSION
   s.licenses = ['MIT']
 
-  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
+  s.required_rubygems_version = Gem::Requirement.new('>= 0') if s.respond_to? :required_rubygems_version=
   s.authors = [
     'Tomas Korcak'
   ]
@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
 
   s.files = `git ls-files`.split($/)
   s.homepage = 'http://github.com/korczis/grache'
-  s.require_paths = ["lib"]
+  s.require_paths = ['lib']
 
   s.add_development_dependency 'coveralls', '~> 0.7', '>= 0.7.8'
   s.add_development_dependency 'rake', '~> 10.3', '>= 10.3.1'
@@ -33,8 +33,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'yard', '~> 0.8.7.3'
   s.add_development_dependency 'ZenTest', '~> 4.10', '>= 4.11.0'
 
-  s.add_development_dependency 'debase' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'
-  s.add_development_dependency 'ruby-debug-ide' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'
+  s.add_development_dependency 'debase', '~> 0' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'
+  s.add_development_dependency 'ruby-debug-ide', '~> 0' if !ENV['TRAVIS_BUILD'] && RUBY_VERSION >= '2.0.0'
 
   s.add_dependency 'activesupport', '~> 4.1', '>= 4.1.0'
   s.add_dependency 'aws-sdk', '~> 1.45'
