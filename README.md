@@ -97,7 +97,7 @@ Lets type:
 grache pack build
 ```
 
-We should get sometthing like this: 
+And we should get sometthing like this: 
 
 ```
 tomaskorcak@kx-mac:~/dev/grache-test$ grache pack build
@@ -118,6 +118,40 @@ Updating files in vendor/cache
   * ....
   * gooddata-0.6.13.gem
 tomaskorcak@kx-mac:~/dev/grache-test$
+```
+
+### grache pack zip
+
+Zips vendor/cache for deployment to S3.
+
+Lets type:
+
+```
+grache pack zip
+```
+
+And we should get sometthing like this:
+
+```
+tomaskorcak@kx-mac:~/dev/grache-test$ grache pack zip
+/Users/tomaskorcak/.rvm/gems/jruby-1.7.19@global/gems/json_pure-1.8.2/lib/json/common.rb:99 warning: already initialized constant NaN
+/Users/tomaskorcak/.rvm/gems/jruby-1.7.19@global/gems/json_pure-1.8.2/lib/json/common.rb:101 warning: already initialized constant Infinity
+/Users/tomaskorcak/.rvm/gems/jruby-1.7.19@global/gems/json_pure-1.8.2/lib/json/common.rb:103 warning: already initialized constant MinusInfinity
+/Users/tomaskorcak/.rvm/gems/jruby-1.7.19@global/gems/json_pure-1.8.2/lib/json/common.rb:128 warning: already initialized constant UnparserError
+Zipping pack: {
+  "dir": "."
+}
+Zipping /Users/tomaskorcak/dev/grache-test
+Deflating /Users/tomaskorcak/dev/grache-test/vendor/cache
+Deflating ...
+Deflating /Users/tomaskorcak/dev/grache-test/vendor/cache/gooddata-0.6.13.gem
+Deflating ...
+Deflating /Users/tomaskorcak/dev/grache-test/vendor/cache/gooddata_connectors_metadata-86f8943cf8f0/spec/unit/types/decimal_spec.rb
+Deflating /Users/tomaskorcak/dev/grache-test/vendor/cache/gooddata_connectors_metadata-86f8943cf8f0/spec/unit/types/integer_spec.rb
+Deflating /Users/tomaskorcak/dev/grache-test/vendor/cache/gooddata_connectors_metadata-86f8943cf8f0/spec/unit/types/string_spec.rb
+Deflating ...
+Deflating /Users/tomaskorcak/dev/grache-test/vendor/cache/xml-simple-1.1.4.gem
+Created grache-21ca1e50ee980a3a987f52548d5a7f0dd5bc977187eda1d130774827d222925b.zip
 ```
 
 ## References
