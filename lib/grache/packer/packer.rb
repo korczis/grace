@@ -90,6 +90,8 @@ module Grache
           FileUtils.mkdir_p vendor_dir
         end
 
+        FileUtils.rm_rf File.join(vendor_dir, 'cache')
+
         gemfile_lock = "#{gemfile}.lock"
         sha = Digest::SHA2.file(gemfile_lock).hexdigest
 
@@ -97,11 +99,22 @@ module Grache
         puts "Looking for #{uri.to_s}"
 
         name = uri.path.split('/').last
-        Net::HTTP.start(uri.host) do |http|
-          resp = http.get(uri.path)
-          open(name, 'wb') do |file|
-            file.write(resp.body)
+        FileUtils.rm_rf name if File.exists?(name)
+
+        begin
+          Net::HTTP.start(uri.host) do |http|
+            resp = http.get(uri.path)
+            if(resp.code == '200')
+              open(name, 'wb') do |file|
+                file.write(resp.body)
+              end
+            else
+              Packer.pack(opts)
+              return
+            end
           end
+        rescue => e
+          puts "ERROR: #{e.inspect}"
         end
 
         Zip::File.open(name) do |zip_file|
@@ -114,8 +127,8 @@ module Grache
           end
         end
 
-        puts "Removing old #{zip_file}"
-        FileUtils.rm_rf zip_file
+        puts "Removing old #{name}"
+        FileUtils.rm_rf name
       end
 
       def pack(opts = DEFAULT_PACK_OPTIONS)
