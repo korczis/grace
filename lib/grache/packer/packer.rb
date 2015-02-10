@@ -1,5 +1,6 @@
 # encoding: utf-8
 
+require 'digest'
 require 'fileutils'
 require 'json'
 require 'tmpdir'
@@ -7,12 +8,21 @@ require 'tmpdir'
 require 'rubygems'
 require 'bundler/cli'
 
+require 'zip'
+
 require_relative '../bundler/bundler'
+require_relative '../zip/zip'
 
 module Grache
   class Packer
+    DEFAULT_INSTALL_OPTIONS = {
+    }
+
     DEFAULT_PACK_OPTIONS = {
       dir: '.'
+    }
+
+    DEFAULT_ZIP_OPTIONS = {
     }
 
     CMDS = {
@@ -55,6 +65,35 @@ module Grache
       end
 
       def get_gemfile_meta(path)
+      end
+
+      def install(opts = DEFAULT_INSTALL_OPTIONS)
+        opts = DEFAULT_INSTALL_OPTIONS.merge(opts)
+
+        puts "Installing pack: #{JSON.pretty_generate(opts)}"
+
+        dir = opts[:dir]
+        fail ArgumentError, 'No directory specified' unless dir
+
+        dir = File.expand_path(dir)
+        puts "Zipping #{dir}"
+
+        gemfile = find_gemfile(dir)
+        return unless gemfile
+
+        gem_dir = File.dirname(gemfile)
+        vendor_dir = File.join(gem_dir, 'vendor/')
+
+        unless File.directory?(vendor_dir)
+          FileUtils.mkdir_p vendor_dir
+          return
+        end
+
+        gemfile_lock = "#{gemfile}.lock"
+        sha = Digest::SHA2.file(gemfile_lock).hexdigest
+
+        url = " https://gdc-ms-grache.s3.amazonaws.com/#{sha}.zip"
+        puts "Looking for #{url}"
       end
 
       def pack(opts = DEFAULT_PACK_OPTIONS)
@@ -100,6 +139,39 @@ module Grache
         cmd = CMDS['bundle-pack'] % gemfile
         exec_cmd(cmd)
       end
+
+      def zip(opts = DEFAULT_ZIP_OPTIONS)
+        opts = DEFAULT_ZIP_OPTIONS.merge(opts)
+
+        puts "Zipping pack: #{JSON.pretty_generate(opts)}"
+
+        dir = opts[:dir]
+        fail ArgumentError, 'No directory specified' unless dir
+
+        dir = File.expand_path(dir)
+        puts "Zipping #{dir}"
+
+        gemfile = find_gemfile(dir)
+        return unless gemfile
+
+        gem_dir = File.dirname(gemfile)
+        vendor_dir = File.join(gem_dir, 'vendor/')
+
+        unless File.directory?(vendor_dir)
+          puts "Vendor directory does not exists. Run 'grache pack build' first!"
+          return
+        end
+
+        gemfile_lock = "#{gemfile}.lock"
+        sha = Digest::SHA2.file(gemfile_lock).hexdigest
+
+        archive = "#{sha}.zip"
+        FileUtils.rm archive, :force => true
+
+        ZipGenerator.new(vendor_dir, archive).write
+
+        puts "Created #{archive}"
+      end
     end
 
 
@@ -111,12 +183,22 @@ module Grache
       Packer.get_checksum(path)
     end
 
-    def install(opts = {})
-      puts "Installing pack: #{JSON.pretty_generate(opts)}"
+    def install(opts = DEFAULT_INSTALL_OPTIONS)
+      opts = DEFAULT_PACK_OPTIONS.merge(opts)
+
+      Packer.install(opts)
     end
 
     def pack(opts = DEFAULT_PACK_OPTIONS)
+      opts = DEFAULT_PACK_OPTIONS.merge(opts)
+
       Packer.pack(opts)
+    end
+
+    def zip(opts = DEFAULT_ZIP_OPTIONS)
+      opts = DEFAULT_PACK_OPTIONS.merge(opts)
+
+      Packer.zip(opts)
     end
   end
 end
