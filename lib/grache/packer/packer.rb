@@ -3,7 +3,9 @@
 require 'digest'
 require 'fileutils'
 require 'json'
+require 'net/http'
 require 'tmpdir'
+require 'uri'
 
 require 'rubygems'
 require 'bundler/cli'
@@ -76,7 +78,6 @@ module Grache
         fail ArgumentError, 'No directory specified' unless dir
 
         dir = File.expand_path(dir)
-        puts "Zipping #{dir}"
 
         gemfile = find_gemfile(dir)
         return unless gemfile
@@ -85,15 +86,36 @@ module Grache
         vendor_dir = File.join(gem_dir, 'vendor/')
 
         unless File.directory?(vendor_dir)
+          puts "Creating #{vendor_dir}"
           FileUtils.mkdir_p vendor_dir
-          return
         end
 
         gemfile_lock = "#{gemfile}.lock"
         sha = Digest::SHA2.file(gemfile_lock).hexdigest
 
-        url = " https://gdc-ms-grache.s3.amazonaws.com/#{sha}.zip"
-        puts "Looking for #{url}"
+        uri = URI.parse("https://gdc-ms-grache.s3.amazonaws.com/grache-#{sha}.zip")
+        puts "Looking for #{uri.to_s}"
+
+        name = uri.path.split('/').last
+        Net::HTTP.start(uri.host) do |http|
+          resp = http.get(uri.path)
+          open(name, 'wb') do |file|
+            file.write(resp.body)
+          end
+        end
+
+        Zip::File.open(name) do |zip_file|
+          # Handle entries one by one
+          zip_file.each do |entry|
+            # Extract to file/directory/symlink
+            puts "Extracting #{entry.name}"
+            out_path = "vendor/#{entry.name}"
+            entry.extract(out_path)
+          end
+        end
+
+        puts "Removing old #{zip_file}"
+        FileUtils.rm_rf zip_file
       end
 
       def pack(opts = DEFAULT_PACK_OPTIONS)
@@ -165,7 +187,7 @@ module Grache
         gemfile_lock = "#{gemfile}.lock"
         sha = Digest::SHA2.file(gemfile_lock).hexdigest
 
-        archive = "#{sha}.zip"
+        archive = "grache-#{sha}.zip"
         FileUtils.rm archive, :force => true
 
         ZipGenerator.new(vendor_dir, archive).write
