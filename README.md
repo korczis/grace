@@ -11,7 +11,7 @@ Great Ruby Cache for gems
 Is simple as typing following command:
 
 ```
-gem install grach
+gem install grache
 ```
 
 We should get something like this:
@@ -25,13 +25,20 @@ tomaskorcak@kx-mac:~/dev/grache-test$
 
 ## Commands
 
-To list command type following:
+- [grache help](#grache-help)
+- [grache pack](#grache-pack)
+- [grache pack build](#grache-pack-build)
+- [grache pack zip](#grache-pack-zip)
+
+### grache help
+
+Lets type following:
 
 ```
 grache help
 ```
 
-We should get something like this:
+And we should get something like this:
 
 ```
 tomaskorcak@kx-mac:~/dev/grache-test$ grache help
@@ -59,13 +66,13 @@ tomaskorcak@kx-mac:~/dev/grache-test$
 
 As title suggest ```grache pack``` is fundamental command of grache.
 
-Lets start with simple:
+Lets type followin:
 
 ```
 grache pack
 ```
 
-We should get sometthing like this: 
+And we should get sometthing like this: 
 
 ```
 tomaskorcak@kx-mac:~/dev/grache-test$ grache pack
@@ -91,7 +98,7 @@ tomaskorcak@kx-mac:~/dev/grache-test$
 
 Builds the vendor/cache for deployment.
 
-Lets type:
+Lets type following:
 
 ```
 grache pack build
@@ -124,7 +131,7 @@ tomaskorcak@kx-mac:~/dev/grache-test$
 
 Zips vendor/cache for deployment to S3.
 
-Lets type:
+Lets type following:
 
 ```
 grache pack zip
