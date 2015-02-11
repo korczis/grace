@@ -48,5 +48,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'multi_json', '~> 1.10.1'
   #s.add_dependency 'parseconfig', '~> 1.0', '>= 1.0.4'
   s.add_dependency 'pmap', '~> 1.0.1'
-  s.add_dependency 'rubyzip', '~> 1.1.6
+  s.add_dependency 'rubyzip', '~> 1.1.6'
 end
