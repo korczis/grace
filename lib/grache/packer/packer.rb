@@ -1,5 +1,6 @@
 # encoding: utf-8
 
+require 'aws-sdk'
 require 'digest'
 require 'fileutils'
 require 'json'
@@ -17,6 +18,8 @@ require_relative '../zip/zip'
 
 module Grache
   class Packer
+    GEMFILE_RE = Regexp.new(/^\s*gem\s+['"]([^'"]+)['"]\s*,\s*:git\s+=>\s+['"]([^'"]+)['"](\s*,\s*:branch\s+=>\s+['""]([^'"]+)['""])?$/)
+
     DEFAULT_INSTALL_OPTIONS = {
     }
 
@@ -41,7 +44,9 @@ module Grache
       'bundle-pack' => 'bundle pack --gemfile=%s --all',
 
       # gemspec path
-      'gem-build' => 'gem build %s' # spec path
+      'gem-build' => 'gem build %s', # spec path
+
+      'gem-generate-index' => 'gem generate_index'
     }
 
     class << self
@@ -146,6 +151,10 @@ module Grache
         puts "Gemfile located at #{gemfile}" if gemfile
         gem_dir = File.dirname(gemfile)
 
+        gemfile = process_gemfile(gemfile)
+
+        # exit(0)
+
         # TODO: Read gemfile programatically
         uses_gemspec = File.open(gemfile).read.index(/^gemspec$/) != nil
         if(uses_gemspec)
@@ -165,14 +174,79 @@ module Grache
           exec_cmd(cmd)
         end
 
-        cache_dir = File.join(gem_dir, 'vendor')
+        cache_dir = File.join(gem_dir, 'vendor', 'cache')
+        gems_dir = File.join(gem_dir, 'vendor', 'gems')
+
+        # Delete cache directory
         if File.directory?(cache_dir)
           puts "Deleting cache #{cache_dir}"
           FileUtils.rm_rf cache_dir
         end
 
+        FileUtils.mkdir_p cache_dir
+
+        # Move built gems to cache
+        Dir.glob("#{gems_dir}/**/*.gem").each do |gem|
+          dest = File.join(cache_dir, File.basename(gem))
+          puts "Moving #{gem} -> #{dest}"
+          FileUtils.mv(gem, dest)
+        end
+
+        # Pack gems
         cmd = CMDS['bundle-pack'] % gemfile
         exec_cmd(cmd)
+
+        # Generate local gem index, see http://stackoverflow.com/questions/5633939/how-do-i-specify-local-gem-files-in-my-gemfile
+        # Dir.chdir(cache_dir) do
+        #   # Pack gems
+        #   cmd = CMDS['gem-generate-index'] % gemfile
+        #   exec_cmd(cmd)
+        # end
+      end
+
+      def process_gemfile(gemfile_path)
+        new_gemfile = ''
+        git_gems = {}
+        File.open(gemfile_path, 'r') do |f|
+          f.each_line do |l|
+            m = GEMFILE_RE.match(l)
+            if(m)
+              branch = m[4] || 'master'
+              new_gemfile += "gem '#{m[1]}',  :path => './vendor/gems/#{m[1]}'\n"
+              git_gems[m[1]] = {
+                :branch => branch,
+                :git => m[2]
+              }
+            else
+              new_gemfile += l
+            end
+          end
+        end
+        puts new_gemfile
+
+        gem_dir = File.join(File.dirname(gemfile_path), 'vendor', 'gems')
+        FileUtils.mkdir_p gem_dir
+        Dir.chdir(gem_dir) do
+          git_gems.each do |name, gem|
+            FileUtils.rm_rf(name)
+            cmd = "git clone #{gem[:git]} #{name}"
+            puts cmd
+            system cmd
+
+            Dir.chdir(name) do
+              cmd = "git checkout #{gem[:branch]}"
+              puts cmd
+              system cmd
+
+              cmd = "gem build *.gemspec"
+              system(cmd)
+            end
+          end
+        end
+
+        new_gemfile_path = "#{gemfile_path}.Generated"
+        File.open(new_gemfile_path, 'w') { |file| file.write(new_gemfile) }
+        new_gemfile_path
       end
 
       def zip(opts = DEFAULT_ZIP_OPTIONS)
@@ -190,7 +264,8 @@ module Grache
         return unless gemfile
 
         gem_dir = File.dirname(gemfile)
-        vendor_dir = File.join(gem_dir, 'vendor/')
+        gems_dir = File.join(gem_dir, 'gems')
+        vendor_dir = File.join(gem_dir, 'vendor')
 
         unless File.directory?(vendor_dir)
           puts "Vendor directory does not exists. Run 'grache pack build' first!"
@@ -203,12 +278,37 @@ module Grache
         archive = "grache-#{sha}.zip"
         FileUtils.rm archive, :force => true
 
+        # ZipGenerator.new(gems_dir, archive).write
         ZipGenerator.new(vendor_dir, archive).write
 
         puts "Created #{archive}"
       end
     end
 
+
+    def deploy(opts = {access_key_id: nil, secret_access_key: nil})
+      bucket_name = 'gdc-ms-grache'
+
+      access_key_id = opts[:access_key_id]
+      if access_key_id.nil?
+        print 'Access Key ID? '
+        access_key_id = $stdin.gets.chomp
+      end
+
+      secret_access_key = opts[:secret_access_key]
+      if secret_access_key.nil?
+        print 'Secret access key? '
+        secret_access_key = $stdin.gets.chomp
+      end
+
+      s3 = AWS::S3.new(:access_key_id => access_key_id, :secret_access_key => secret_access_key)
+
+      Dir.glob("**/grache-*.zip").each do |grache_file|
+        key = File.basename(grache_file)
+        s3.buckets[bucket_name].objects[key].write(:file => grache_file)
+        puts "Uploading file #{grache_file} to bucket #{bucket_name}."
+      end
+    end
 
     def find_gemfile(path)
       Packer.find_gemfile(path)
