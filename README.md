@@ -27,7 +27,7 @@ tomaskorcak@kx-mac:~/dev/grache-test$
 
 * Prepare your Gemfile as usually
 * Name your script 'main.rb'
-* Copy [https://github.com/korczis/grache-test/blob/master/stub.rb](wrapper.rb) to folder with your 'main.rb' script
+* Copy [wrapper.rb](https://github.com/korczis/grache-test/blob/master/stub.rb) to folder with your 'main.rb' script
 * Build and release cache using `grache release` command
 * Deploy your script, include:
     * Gemfile.Generated
