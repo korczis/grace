@@ -18,10 +18,22 @@ We should get something like this:
 
 ```
 tomaskorcak@kx-mac:~/dev/grache-test$ gem install grache
-Successfully installed grache-0.0.2
+Successfully installed grache-0.0.12
 1 gem installed
 tomaskorcak@kx-mac:~/dev/grache-test$
 ```
+
+### Using with GoodData
+
+* Prepare your Gemfile as usually
+* Name your script 'main.rb'
+* Copy [https://github.com/korczis/grache-test/blob/master/stub.rb](wrapper.rb) to folder with your 'main.rb' script
+* Build and release cache using `grache release` command
+* Deploy your script, include:
+    * Gemfile.Generated
+    * Gemfile.Generated.lock
+    * wrapper.rb
+* Schedule wrapper.rb (instead of main.rb) for execution
 
 ## Commands
 
@@ -188,6 +200,17 @@ Extracting ...
 Extracting cache/xml-simple-1.1.4.gem
 Removing old grache-21ca1e50ee980a3a987f52548d5a7f0dd5bc977187eda1d130774827d222925b.zip
 tomaskorcak@kx-mac:~/dev/grache-test$
+```
+
+### grache pack deploy
+
+Deploys zipped cache to s3.
+
+```
+tomaskorcak@kx-mac:~/dev/downloader_projects/ads$ grache pack deploy
+Access Key ID? YOUR_ACCESS_KEY_ID
+Secret access key? YOUR_SECRET_ACCESS_KEY
+tomaskorcak@kx-mac:~/dev/downloader_projects/ads$
 ```
 
 ## References
