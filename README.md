@@ -33,6 +33,7 @@ tomaskorcak@kx-mac:~/dev/grache-test$
     * Gemfile.Generated
     * Gemfile.Generated.lock
     * wrapper.rb
+    * [core.rb](https://github.com/korczis/grache-test/blob/master/core.rb)
 * Schedule wrapper.rb (instead of main.rb) for execution
 
 ## Commands
